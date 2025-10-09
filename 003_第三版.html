@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园点歌系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4bb543;
+            --warning: #ffcc00;
+            --danger: #dc3545;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        @media (min-width: 992px) {
+            .app-container {
+                flex-direction: row;
+            }
+            
+            .form-section {
+                flex: 1;
+            }
+            
+            .records-section {
+                flex: 2;
+            }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h2 i {
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #e1e5ee;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s, transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .btn-success {
+            background: var(--success);
+        }
+        
+        .btn-success:hover {
+            background: #3a9e35;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+        
+        .btn-warning:hover {
+            background: #e6b800;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding-left: 15px;
+        }
+        
+        .search-box i {
+            position: static;
+            transform: none;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e1e5ee;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: var(--secondary);
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #dee2e6;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: white;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        .highlight {
+            background-color: #fff9c4;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--secondary);
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .close-btn:hover {
+            color: var(--danger);
+        }
+        
+        .admin-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 20px;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-music"></i> 校园点歌系统</h1>
+            <p>用音乐传递祝福，让温暖充满校园</p>
+        </header>
+        
+        <div class="app-container">
+            <div class="form-section">
+                <div class="card">
+                    <h2><i class="fas fa-edit"></i> 点歌信息提交</h2>
+                    <div id="message" class="message"></div>
+                    <form id="songRequestForm">
+                        <div class="form-group">
+                            <label for="requesterClass">点歌人班级</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-users"></i>
+                                <input type="text" id="requesterClass" name="requesterClass" required placeholder="例如：2512">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="requesterName">点歌人姓名</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="requesterName" name="requesterName" required placeholder="请输入您的姓名">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="receiverClass">收歌人班级</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-users"></i>
+                                <input type="text" id="receiverClass" name="receiverClass" required placeholder="例如：2512">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="receiverName">收歌人姓名</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user-check"></i>
+                                <input type="text" id="receiverName" name="receiverName" required placeholder="请输入收歌人姓名">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="songInfo">歌曲信息/链接</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-music"></i>
+                                <textarea id="songInfo" name="songInfo" required placeholder="请输入歌曲名称、歌手，或提供音乐链接"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">祝福语 (可选)</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-heart"></i>
+                                <textarea id="message" name="message" placeholder="写下你想对收歌人说的话..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn-success">
+                            <i class="fas fa-paper-plane"></i> 提交点歌
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h2><i class="fas fa-chart-bar"></i> 点歌统计</h2>
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalRequests">0</div>
+                            <div class="stat-label">总点歌数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="todayRequests">0</div>
+                            <div class="stat-label">今日点歌</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="uniqueRequesters">0</div>
+                            <div class="stat-label">点歌人数</div>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-controls">
+                        <button id="adminModeBtn" class="btn-warning">
+                            <i class="fas fa-user-shield"></i> 管理员模式
+                        </button>
+                        <button id="exportAllBtn" class="btn-success">
+                            <i class="fas fa-file-export"></i> 导出全部数据
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="records-section">
+                <div class="card">
+                    <h2><i class="fas fa-list-alt"></i> 点歌记录</h2>
+                    
+                    <div class="search-box">
+                        <div class="input-with-icon">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="搜索班级、姓名或歌曲...">
+                        </div>
+                        <button id="searchBtn">
+                            <i class="fas fa-search"></i> 搜索
+                        </button>
+                    </div>
+                    
+                    <div class="actions">
+                        <button id="exportBtn" class="btn-success">
+                            <i class="fas fa-file-export"></i> 导出为Excel
+                        </button>
+                        <button id="clearSearchBtn" class="btn-warning">
+                            <i class="fas fa-times"></i> 清除筛选
+                        </button>
+                    </div>
+                    
+                    <div id="recordsTableContainer" style="max-height: 500px; overflow-y: auto;">
+                        <table id="recordsTable">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>点歌人班级</th>
+                                    <th>点歌人姓名</th>
+                                    <th>收歌人班级</th>
+                                    <th>收歌人姓名</th>
+                                    <th>歌曲信息</th>
+                                    <th>提交时间</th>
+                                    <th id="adminColumn" style="display: none;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recordsBody">
+                                <!-- 记录将通过JavaScript动态填充 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <i class="fas fa-inbox"></i>
+                        <h3>暂无点歌记录</h3>
+                        <p>提交第一条点歌信息后，记录将显示在这里</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>校园点歌系统 &copy; 2023 | 所有点歌记录仅保存在本地浏览器中</p>
+        </footer>
+    </div>
+
+    <!-- 管理员验证模态框 -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">管理员身份验证</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="authKey">联系广播站人员解锁</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-key"></i>
+                    <input type="password" id="authKey" placeholder="输入管理员密匙">
+                </div>
+            </div>
+            <div class="actions">
+                <button id="confirmAuth" class="btn-success">
+                    <i class="fas fa-check"></i> 确认
+                </button>
+                <button id="cancelAuth" class="btn-warning">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认模态框 -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">确认删除</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <p>您确定要删除这条点歌记录吗？此操作不可撤销。</p>
+            <div class="actions">
+                <button id="confirmDelete" class="btn-danger">
+                    <i class="fas fa-trash"></i> 确认删除
+                </button>
+                <button id="cancelDelete" class="btn-warning">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化数据存储
+        let songRequests = JSON.parse(localStorage.getItem('songRequests')) || [];
+        let isAdminMode = false;
+        let currentDeleteId = null;
+        const ADMIN_KEYS = ['HASFRZYXX_SS', 'HASFRZYXX_LS']; // 两个管理员密钥
+        
+        // DOM元素
+        const songRequestForm = document.getElementById('songRequestForm');
+        const recordsBody = document.getElementById('recordsBody');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const exportAllBtn = document.getElementById('exportAllBtn');
+        const adminModeBtn = document.getElementById('adminModeBtn');
+        const messageEl = document.getElementById('message');
+        const emptyState = document.getElementById('emptyState');
+        const totalRequestsEl = document.getElementById('totalRequests');
+        const todayRequestsEl = document.getElementById('todayRequests');
+        const uniqueRequestersEl = document.getElementById('uniqueRequesters');
+        const adminColumn = document.getElementById('adminColumn');
+        
+        // 模态框元素
+        const authModal = document.getElementById('authModal');
+        const deleteModal = document.getElementById('deleteModal');
+        const authKeyInput = document.getElementById('authKey');
+        const confirmAuth = document.getElementById('confirmAuth');
+        const cancelAuth = document.getElementById('cancelAuth');
+        const confirmDelete = document.getElementById('confirmDelete');
+        const cancelDelete = document.getElementById('cancelDelete');
+        const closeBtns = document.querySelectorAll('.close-btn');
+        
+        // 显示消息函数
+        function showMessage(message, type = 'success') {
+            messageEl.textContent = message;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+            
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 5000);
+        }
+        
+        // 保存数据到本地存储
+        function saveData() {
+            localStorage.setItem('songRequests', JSON.stringify(songRequests));
+            updateStats();
+        }
+        
+        // 更新统计数据
+        function updateStats() {
+            // 总点歌数
+            totalRequestsEl.textContent = songRequests.length;
+            
+            // 今日点歌数
+            const today = new Date().toDateString();
+            const todayCount = songRequests.filter(request => {
+                return new Date(request.timestamp).toDateString() === today;
+            }).length;
+            todayRequestsEl.textContent = todayCount;
+            
+            // 点歌人数（去重）
+            const uniqueRequesters = new Set(songRequests.map(request => 
+                `${request.requesterClass}-${request.requesterName}`
+            )).size;
+            uniqueRequestersEl.textContent = uniqueRequesters;
+        }
+        
+        // 表单提交处理
+        songRequestForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const request = {
+                id: Date.now(), // 使用时间戳作为唯一ID
+                requesterClass: formData.get('requesterClass'),
+                requesterName: formData.get('requesterName'),
+                receiverClass: formData.get('receiverClass'),
+                receiverName: formData.get('receiverName'),
+                songInfo: formData.get('songInfo'),
+                message: formData.get('message'),
+                timestamp: new Date().toLocaleString('zh-CN')
+            };
+            
+            // 添加到数据数组
+            songRequests.push(request);
+            
+            // 保存到本地存储
+            saveData();
+            
+            // 显示成功消息
+            showMessage('点歌信息提交成功！感谢您的参与。');
+            
+            // 重置表单
+            this.reset();
+            
+            // 更新记录表格
+            updateRecordsTable();
+        });
+        
+        // 更新点歌记录表格
+        function updateRecordsTable(filteredData = null) {
+            const data = filteredData || songRequests;
+            
+            recordsBody.innerHTML = '';
+            
+            if (data.length === 0) {
+                emptyState.style.display = 'block';
+                document.getElementById('recordsTable').style.display = 'none';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            document.getElementById('recordsTable').style.display = 'table';
+            
+            data.forEach((request, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${request.requesterClass}</td>
+                    <td>${request.requesterName}</td>
+                    <td>${request.receiverClass}</td>
+                    <td>${request.receiverName}</td>
+                    <td>${request.songInfo}</td>
+                    <td>${request.timestamp}</td>
+                    ${isAdminMode ? `<td><button class="btn-danger delete-btn" data-id="${request.id}"><i class="fas fa-trash"></i> 删除</button></td>` : ''}
+                `;
+                recordsBody.appendChild(row);
+            });
+            
+            // 如果是管理员模式，添加删除按钮事件
+            if (isAdminMode) {
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        showDeleteModal(id);
+                    });
+                });
+            }
+        }
+        
+        // 搜索功能
+        function searchRecords() {
+            const query = searchInput.value.trim().toLowerCase();
+            
+            if (!query) {
+                updateRecordsTable();
+                return;
+            }
+            
+            const filteredData = songRequests.filter(request => 
+                request.requesterClass.toLowerCase().includes(query) ||
+                request.requesterName.toLowerCase().includes(query) ||
+                request.receiverClass.toLowerCase().includes(query) ||
+                request.receiverName.toLowerCase().includes(query) ||
+                request.songInfo.toLowerCase().includes(query)
+            );
+            
+            updateRecordsTable(filteredData);
+            
+            // 高亮显示匹配的文本
+            if (filteredData.length > 0) {
+                highlightText(query);
+            }
+        }
+        
+        // 高亮搜索文本
+        function highlightText(query) {
+            const cells = recordsBody.querySelectorAll('td');
+            
+            cells.forEach(cell => {
+                const text = cell.textContent;
+                const lowerText = text.toLowerCase();
+                
+                if (lowerText.includes(query)) {
+                    const regex = new RegExp(`(${query})`, 'gi');
+                    cell.innerHTML = text.replace(regex, '<span class="highlight">$1</span>');
+                }
+            });
+        }
+        
+        // 导出为Excel
+        function exportToExcel() {
+            if (songRequests.length === 0) {
+                showMessage('没有数据可导出！', 'error');
+                return;
+            }
+            
+            // 创建CSV内容
+            let csvContent = "点歌人班级,点歌人姓名,收歌人班级,收歌人姓名,歌曲信息,祝福语,提交时间\n";
+            
+            songRequests.forEach(request => {
+                csvContent += `"${request.requesterClass}","${request.requesterName}","${request.receiverClass}","${request.receiverName}","${request.songInfo}","${request.message || ''}","${request.timestamp}"\n`;
+            });
+            
+            // 创建下载链接
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `点歌记录_${new Date().toLocaleDateString('zh-CN')}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showMessage('数据导出成功！');
+        }
+        
+        // 显示管理员验证模态框
+        function showAuthModal() {
+            authKeyInput.value = '';
+            authModal.style.display = 'flex';
+        }
+        
+        // 隐藏管理员验证模态框
+        function hideAuthModal() {
+            authModal.style.display = 'none';
+        }
+        
+        // 显示删除确认模态框
+        function showDeleteModal(id) {
+            currentDeleteId = id;
+            deleteModal.style.display = 'flex';
+        }
+        
+        // 隐藏删除确认模态框
+        function hideDeleteModal() {
+            currentDeleteId = null;
+            deleteModal.style.display = 'none';
+        }
+        
+        // 验证管理员密钥
+        function validateAdminKey(key) {
+            return ADMIN_KEYS.includes(key);
+        }
+        
+        // 进入管理员模式
+        function enterAdminMode() {
+            isAdminMode = true;
+            adminModeBtn.innerHTML = '<i class="fas fa-user-shield"></i> 已进入管理员模式';
+            adminModeBtn.classList.remove('btn-warning');
+            adminModeBtn.classList.add('btn-success');
+            adminColumn.style.display = 'table-cell';
+            updateRecordsTable();
+            showMessage('已成功进入管理员模式！', 'success');
+        }
+        
+        // 退出管理员模式
+        function exitAdminMode() {
+            isAdminMode = false;
+            adminModeBtn.innerHTML = '<i class="fas fa-user-shield"></i> 管理员模式';
+            adminModeBtn.classList.remove('btn-success');
+            adminModeBtn.classList.add('btn-warning');
+            adminColumn.style.display = 'none';
+            updateRecordsTable();
+            showMessage('已退出管理员模式！', 'success');
+        }
+        
+        // 删除记录
+        function deleteRecord(id) {
+            songRequests = songRequests.filter(request => request.id !== id);
+            saveData();
+            updateRecordsTable();
+            showMessage('记录删除成功！', 'success');
+        }
+        
+        // 事件监听器
+        searchBtn.addEventListener('click', searchRecords);
+        
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                searchRecords();
+            }
+        });
+        
+        clearSearchBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            updateRecordsTable();
+        });
+        
+        exportBtn.addEventListener('click', exportToExcel);
+        exportAllBtn.addEventListener('click', exportToExcel);
+        
+        adminModeBtn.addEventListener('click', function() {
+            if (isAdminMode) {
+                exitAdminMode();
+            } else {
+                showAuthModal();
+            }
+        });
+        
+        confirmAuth.addEventListener('click', function() {
+            const key = authKeyInput.value.trim();
+            if (validateAdminKey(key)) {
+                enterAdminMode();
+                hideAuthModal();
+            } else {
+                showMessage('管理员密钥错误！', 'error');
+                authKeyInput.value = '';
+                authKeyInput.focus();
+            }
+        });
+        
+        cancelAuth.addEventListener('click', hideAuthModal);
+        
+        confirmDelete.addEventListener('click', function() {
+            if (currentDeleteId) {
+                deleteRecord(currentDeleteId);
+                hideDeleteModal();
+            }
+        });
+        
+        cancelDelete.addEventListener('click', hideDeleteModal);
+        
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (authModal.style.display === 'flex') {
+                    hideAuthModal();
+                } else if (deleteModal.style.display === 'flex') {
+                    hideDeleteModal();
+                }
+            });
+        });
+        
+        // 点击模态框外部关闭
+        window.addEventListener('click', function(e) {
+            if (e.target === authModal) {
+                hideAuthModal();
+            } else if (e.target === deleteModal) {
+                hideDeleteModal();
+            }
+        });
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            updateRecordsTable();
+            updateStats();
+        });
+    </script>
+</body>
+</html>
